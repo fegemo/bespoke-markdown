@@ -42,40 +42,6 @@ var md = require('markdown-it')({
   }
 });
 
-
-    // hljsRenderer = new marked.Renderer();
-
-// hljsRenderer.code = function(code, lang, escaped) {
-//   if (lang && hljs.getLanguage(lang)) {
-//     try {
-//       code = hljs.highlight(lang, code).value;
-//     } catch (e) {
-//     }
-//   }
-//
-//   return '<pre><code'
-//     + (lang
-//         ? ' class="hljs ' + this.options.langPrefix + lang + '"'
-//         : ' class="hljs"')
-//     + '>'
-//     + code
-//     + '\n</code></pre>\n';
-// };
-
-// marked.setOptions({
-//   renderer: hljsRenderer,
-//   highlight: function(code, lang) {
-//     var params = [code];
-//     if (lang) {
-//       params.push([lang]);
-//     }
-//     return hljs.highlightAuto.apply(this, params).value;
-//   }
-// });
-
-
-
-
 /**
  * Fetches the content of a file through AJAX.
  * @param {string} path the path of the file to fetch
@@ -139,8 +105,7 @@ var slidify = function(deck, slide) {
         var slidesContent = fileContents.split(/\r?\n---\r?\n/);
         slidesContent.forEach(function(slideContent) {
           var slideContainer = createSlide(deck, slide);
-          slideContainer.innerHTML = slideContent;
-          markdownSlide(slideContainer);
+          slideContainer.innerHTML = md.render(slideContent);
         });
 
         // removes original slide
