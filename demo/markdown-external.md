@@ -1,6 +1,6 @@
 # &lt; [Back](index.html)
 
-This is a sample usage of [bespoke-markdown](https://github.com/aaronpowell/bespoke-markdown)
+This is a sample usage of [bespoke-markdown](https://github.com/fegemo/bespoke-markdownit)
 using **an external markdown file** for the whole presentation.
 
 The structure of the html of the presentation:
@@ -21,7 +21,7 @@ Please, proceed to the next slide.
 
 And the markdown-external.md file:
 
-```markdown
+```md
 # Sample usage
 
 What does the fox say?
@@ -30,11 +30,11 @@ What does the fox say?
   * Wapapapapa-papow
   * Rati-rati-rati-how
 
----
+'---
 
 # Second slide
 
-The "---" in its own line creates a new slide.
+The "---" (without the leading ') in its own line creates a new slide.
 
 ```
 

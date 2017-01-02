@@ -1,11 +1,11 @@
 {
-  "name": "bespoke-markdown",
-  "version": "0.0.0",
-  "main": "./dist/bespoke-markdown.js",
+  "name": "bespoke-markdownit",
+  "version": "1.0.0",
+  "main": "./dist/bespoke-markdownit.js",
   "ignore": [
     "**/.*"
   ],
   "dependencies": {
-    "bespoke.js": ">=1.0.0-beta"
+    "bespoke.js": ">=1.0.0"
   }
 }

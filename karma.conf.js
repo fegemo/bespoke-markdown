@@ -28,7 +28,7 @@ module.exports = function(config) {
     },
     */
 
-    port: 8080,
+    port: 9090,
 
     logLevel: config.LOG_INFO,
 
@@ -36,6 +36,6 @@ module.exports = function(config) {
 
     browsers: ['PhantomJS'],
 
-    singleRun: true
+    singleRun: false
   });
 };
