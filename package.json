@@ -63,6 +63,7 @@
   ],
   "dependencies": {
     "highlight.js": "^9.9.0",
+    "lodash.isempty": "^4.4.0",
     "markdown-it": "^8.2.2"
   }
 }

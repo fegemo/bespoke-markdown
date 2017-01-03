@@ -61,7 +61,7 @@ gulp.task('coveralls', ['test'], function() {
 });
 
 gulp.task('compile', ['clean'], function() {
-  return browserify({/*debug: true,*/ standalone: 'bespoke.plugins.markdownIt'})
+  return browserify({debug: true, standalone: 'bespoke.plugins.markdownIt'})
     .add('./lib/bespoke-markdownit.js')
     .bundle()
     .pipe(source('bespoke-markdownit.js'))

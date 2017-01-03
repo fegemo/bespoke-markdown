@@ -19,14 +19,12 @@ module.exports = function(config) {
       'test/spec/*.js': 'browserify'
     },
 
-    reporters: ['progress'/*, 'coverage'*/],
+    reporters: ['progress', 'coverage'],
 
-    /*
     coverageReporter: {
       type : 'lcov',
       dir : 'test/coverage'
     },
-    */
 
     port: 9090,
 
@@ -36,6 +34,6 @@ module.exports = function(config) {
 
     browsers: ['PhantomJS'],
 
-    singleRun: false
+    singleRun: true
   });
 };
