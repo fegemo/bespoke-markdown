@@ -1,5 +1,3 @@
-Function.prototype.bind = Function.prototype.bind || require('function-bind');
-
 var bespoke = require('bespoke'),
     markdown = require('../../lib-instrumented/bespoke-markdownit.js');
     FIXTURES_PATH = 'base/test/fixtures/';
@@ -7,8 +5,17 @@ var bespoke = require('bespoke'),
 describe('bespoke-markdownit', function() {
 
   var deck,
-
+    parentNode,
+    createParent = function() {
+      parentNode = document.createElement('article');
+    },
+    createSlide = function(content) {
+      var slideNode = document.createElement('section');
+      slideNode.innerHTML = content;
+      parentNode.appendChild(slideNode);
+    },
     clearDocument = function() {
+      parentNode = null;
       var body = document.getElementsByTagName('body')[0];
       body.innerHTML = '';
     };
@@ -17,12 +24,12 @@ describe('bespoke-markdownit', function() {
 
   describe('deck.slide', function() {
     var createDeck = function(slideEls) {
-      var parent = document.createElement('article');
+      createParent();
       slideEls.forEach(function(slide) {
-        parent.appendChild(slide);
+        parentNode.appendChild(slide);
       });
 
-      deck = bespoke.from(parent, [
+      deck = bespoke.from(parentNode, [
         markdown()
       ]);
     };
@@ -36,7 +43,8 @@ describe('bespoke-markdownit', function() {
       }
       createDeck(slides);
 
-      expect(deck.slides[0].innerHTML.trim()).toBe('<p>just a <strong>bold</strong> text 0</p>');
+      expect(deck.slides[0].innerHTML.trim())
+        .toBe('<p>just a <strong>bold</strong> text 0</p>');
     });
 
     it('should allow mixed markdown and html slides', function() {
@@ -53,15 +61,6 @@ describe('bespoke-markdownit', function() {
   });
 
   describe('highlighting', function() {
-    var parentNode,
-        createParent = function() {
-          parentNode = document.createElement('article');
-        },
-        createSlide = function(content) {
-          var slideNode = document.createElement('section');
-          slideNode.innerHTML = content;
-          parentNode.appendChild(slideNode);
-        };
 
     beforeEach(createParent);
 
@@ -88,10 +87,6 @@ describe('bespoke-markdownit', function() {
   });
 
   describe('external markdown file', function() {
-    var parentNode,
-        createParent = function() {
-          parentNode = document.createElement('article');
-        };
 
     beforeEach(createParent);
 
@@ -115,7 +110,8 @@ describe('bespoke-markdownit', function() {
 
     it('should render an error if the external file is not reachable',
       function() {
-      parentNode.setAttribute('data-markdown', FIXTURES_PATH + 'does-not-exist.md');
+      parentNode.setAttribute('data-markdown', FIXTURES_PATH +
+        'does-not-exist.md');
       deck = bespoke.from(parentNode, [markdown()]);
       var slideContent = deck.slides[0] ? deck.slides[0].innerHTML.trim() : '';
       expect(slideContent).toMatch(/erro/i);
@@ -137,15 +133,6 @@ describe('bespoke-markdownit', function() {
   });
 
   describe('slide metadata', function () {
-    var parentNode,
-        createParent = function() {
-          parentNode = document.createElement('article');
-        },
-        createSlide = function(content) {
-          var slideNode = document.createElement('section');
-          slideNode.innerHTML = content;
-          parentNode.appendChild(slideNode);
-        };
 
     beforeEach(createParent);
 
@@ -167,7 +154,8 @@ describe('bespoke-markdownit', function() {
         c: aFunc
       })]);
 
-      expect(aFunc).toHaveBeenCalledWith(jasmine.any(Number), jasmine.objectContaining({ d: 1 }));
+      expect(aFunc).toHaveBeenCalledWith(
+        jasmine.any(Number), jasmine.objectContaining({ d: 1 }));
     });
 
     it('should allow metadata defined as a single primitive', function() {
@@ -187,10 +175,12 @@ describe('bespoke-markdownit', function() {
         f: aFunc
       })]);
 
-      expect(aFunc).toHaveBeenCalledWith(jasmine.any(Number), '123', 456, jasmine.objectContaining({ g: 0 }));
+      expect(aFunc).toHaveBeenCalledWith(
+        jasmine.any(Number), '123', 456, jasmine.objectContaining({ g: 0 }));
     });
 
-    it('should call the metadata callback function with the first parameter as the slide index', function() {
+    it('should call the metadata callback function with the first parameter ' +
+      'as the slide index', function() {
       createSlide('# slide number 0');
       createSlide('# slide number 1');
       createSlide('<!-- { "h": null } -->\n# slide number 2');
@@ -202,7 +192,8 @@ describe('bespoke-markdownit', function() {
       expect(aFunc).toHaveBeenCalledWith(2, null);
     });
 
-    it('should allow multiple metadata callback functions to be called with their respective arguments', function() {
+    it('should allow multiple metadata callback functions to be called with ' +
+      'their respective arguments', function() {
       createSlide('<!-- { "i": 25, "j": [100, -1] } -->');
       var aFunc = jasmine.createSpy('function i'),
         anotherFunc = jasmine.createSpy('function j');
@@ -235,13 +226,63 @@ describe('bespoke-markdownit', function() {
     it('should delete the metadata node after it has been parsed', function() {
       createSlide('<!-- { "c": 1 } --> # title of slide');
       deck = bespoke.from(parentNode, [markdown()]);
-      expect(parentNode.firstChild.firstChild.nodeType).not.toBe(Node.COMMENT_NODE);
+      expect(parentNode.firstChild.firstChild.nodeType).not
+        .toBe(Node.COMMENT_NODE);
     });
 
-    it('should keep the comment node after it has been parsed if it wasn\'t metadata', function() {
+    it('should keep the comment node after it has been parsed if it ' +
+      'wasn\'t metadata', function() {
       createSlide('<!-- { adfadsfadsfa } -->\n# title of slide');
       deck = bespoke.from(parentNode, [markdown()]);
       expect(parentNode.firstChild.firstChild.nodeType).toBe(Node.COMMENT_NODE);
+    });
+  });
+
+  describe('usage of markdown-it plugins', function() {
+
+    beforeEach(createParent);
+
+    it('should allow one plugin to be handed over to markdown-it', function() {
+      createSlide('# title with a smile :)');
+      var pluginSpy = jasmine.createSpy('plugin function');
+      deck = bespoke.from(parentNode, [
+        markdown(null, function(markdownit) {
+          markdownit.core.ruler.push('smile', pluginSpy);
+        })
+      ]);
+
+      expect(pluginSpy).toHaveBeenCalled();
+    });
+
+    it('should allow an array of plugins to be handed over to markdown-it',
+      function() {
+      createSlide('# title with a smile :)');
+      var plugin1Spy = jasmine.createSpy('plugin 1 function');
+      var plugin2Spy = jasmine.createSpy('plugin 2 function');
+      deck = bespoke.from(parentNode, [
+        markdown(null, [
+          function(markdownit) {
+            markdownit.core.ruler.push('smile', plugin1Spy);
+          },
+          function(markdownit) {
+            markdownit.core.ruler.push('sadden', plugin2Spy);
+          }
+        ])
+      ]);
+
+      expect(plugin1Spy).toHaveBeenCalled();
+      expect(plugin2Spy).toHaveBeenCalled();
+    });
+
+    it('should ignore a passed plugin that was not a function', function() {
+      var originalSlideContent = '# plz write **sthg** interesting _here_';
+      createSlide(originalSlideContent);
+      deck = bespoke.from(parentNode, [
+        markdown(null, 'thisShouldBeAFunction')
+      ]);
+
+      expect(deck.slides[0].firstElementChild.innerHTML)
+        .not.toEqual(originalSlideContent);
     });
   });
 
