@@ -144,7 +144,7 @@ describe('bespoke-markdownit', function() {
           a: aFunc
         })]);
 
-        expect(aFunc).toHaveBeenCalledWith(jasmine.any(Number), 42);
+        expect(aFunc).toHaveBeenCalledWith(jasmine.any(Object), 42);
       });
 
     it('should allow metadata defined as a single object', function() {
@@ -155,7 +155,7 @@ describe('bespoke-markdownit', function() {
       })]);
 
       expect(aFunc).toHaveBeenCalledWith(
-        jasmine.any(Number), jasmine.objectContaining({ d: 1 }));
+        jasmine.any(Object), jasmine.objectContaining({ d: 1 }));
     });
 
     it('should allow metadata defined as a single primitive', function() {
@@ -165,7 +165,7 @@ describe('bespoke-markdownit', function() {
         e: aFunc
       })]);
 
-      expect(aFunc).toHaveBeenCalledWith(jasmine.any(Number), 15);
+      expect(aFunc).toHaveBeenCalledWith(jasmine.any(Object), 15);
     });
 
     it('should allow metadata defined as an array', function() {
@@ -176,7 +176,7 @@ describe('bespoke-markdownit', function() {
       })]);
 
       expect(aFunc).toHaveBeenCalledWith(
-        jasmine.any(Number), '123', 456, jasmine.objectContaining({ g: 0 }));
+        jasmine.any(Object), '123', 456, jasmine.objectContaining({ g: 0 }));
     });
 
     it('should call the metadata callback function with the first parameter ' +
@@ -189,7 +189,7 @@ describe('bespoke-markdownit', function() {
         h: aFunc
       })]);
 
-      expect(aFunc).toHaveBeenCalledWith(2, null);
+      expect(aFunc).toHaveBeenCalledWith(deck.slides[2], null);
     });
 
     it('should allow multiple metadata callback functions to be called with ' +
@@ -202,8 +202,8 @@ describe('bespoke-markdownit', function() {
         j: anotherFunc
       })]);
 
-      expect(aFunc).toHaveBeenCalledWith(jasmine.any(Number), 25);
-      expect(anotherFunc).toHaveBeenCalledWith(jasmine.any(Number), 100, -1);
+      expect(aFunc).toHaveBeenCalledWith(jasmine.any(Object), 25);
+      expect(anotherFunc).toHaveBeenCalledWith(jasmine.any(Object), 100, -1);
     });
 
     it('should ignore metadata that cannot be parsed', function() {
