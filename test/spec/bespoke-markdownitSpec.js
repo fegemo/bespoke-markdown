@@ -274,7 +274,8 @@ describe('bespoke-markdownit', function() {
       expect(plugin2Spy).toHaveBeenCalled();
     });
 
-    it('should ignore a passed plugin that was not a function', function() {
+    it('should ignore a passed plugin that was not a function, neither ' +
+      'an array', function() {
       var originalSlideContent = '# plz write **sthg** interesting _here_';
       createSlide(originalSlideContent);
       deck = bespoke.from(parentNode, [
@@ -284,6 +285,19 @@ describe('bespoke-markdownit', function() {
       expect(deck.slides[0].firstElementChild.innerHTML)
         .not.toEqual(originalSlideContent);
     });
+
+    it('should allow plugin\'s parameters to be passed if the plugin ' +
+      'is passed as an array along with its arguments', function() {
+        var slideContent = '# hey',
+          pluginSpy = jasmine.createSpy();
+        createSlide(slideContent);
+        deck = bespoke.from(parentNode, [
+          markdown(null, [pluginSpy, 'arg1', 2])
+        ]);
+
+        expect(pluginSpy).toHaveBeenCalled();
+    });
+
   });
 
 });
