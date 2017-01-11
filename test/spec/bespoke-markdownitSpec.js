@@ -176,7 +176,7 @@ describe('bespoke-markdownit', function() {
       })]);
 
       expect(aFunc).toHaveBeenCalledWith(
-        jasmine.any(Object), '123', 456, jasmine.objectContaining({ g: 0 }));
+        jasmine.any(Object), ['123', 456, jasmine.objectContaining({ g: 0 })]);
     });
 
     it('should call the metadata callback function with the first parameter ' +
@@ -194,7 +194,7 @@ describe('bespoke-markdownit', function() {
 
     it('should allow multiple metadata callback functions to be called with ' +
       'their respective arguments', function() {
-      createSlide('<!-- { "i": 25, "j": [100, -1] } -->');
+      createSlide('<!-- { "i": 25, "j": "lala" } -->');
       var aFunc = jasmine.createSpy('function i'),
         anotherFunc = jasmine.createSpy('function j');
       deck = bespoke.from(parentNode, [markdown({
@@ -203,7 +203,7 @@ describe('bespoke-markdownit', function() {
       })]);
 
       expect(aFunc).toHaveBeenCalledWith(jasmine.any(Object), 25);
-      expect(anotherFunc).toHaveBeenCalledWith(jasmine.any(Object), 100, -1);
+      expect(anotherFunc).toHaveBeenCalledWith(jasmine.any(Object), 'lala');
     });
 
     it('should ignore metadata that cannot be parsed', function() {
