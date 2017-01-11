@@ -45,6 +45,7 @@
     "karma-coverage": "^1.1.1",
     "karma-jasmine": "^1.1.0",
     "karma-phantomjs-launcher": "^1.0.2",
+    "markdown-it-deflist": "^2.0.1",
     "merge-stream": "^1.0.1",
     "vinyl-buffer": "1.0.0",
     "vinyl-map": "^1.0.2",

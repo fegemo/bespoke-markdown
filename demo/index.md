@@ -7,15 +7,18 @@ the [_(GitHub flavored)_ markdown format](https://help.github.com/articles/githu
 instead of authoring them only in plain HTML.
 
 There are 4 ways of using it:
-<dl>
-  <dt><a href="markdown-content.html" class="label">markdown content</a></dt> <dd>Use markdown for the
-  **content** of the slides</dd>
-  <dt><a href="markdown-external.html" class="label">markdown external</a></dt> <dd>Use an **external markdown
-  file** for the whole presentation</dd>
-  <dt><a href="mixed-content.html" class="label">html + markdown content</a></dt> <dd>Use mixed slides
-  with content in **HTML or markdown**</dd>
-  <dt><a href="mixed-external.html" class="label">html + markdown external</a></dt> <dd>Use mixed slides with content in **HTML**
-  or loaded with an **external markdown file**</dd>
-</dl>
+
+[Markdown content](markdown-content.html)
+  ~ Use markdown for the **content** of the slides
+
+[External Markdown file](markdown-external.html)
+  ~ Use an **external markdown file** for the whole presentation
+
+[HTML + Markdown content](mixed-content.html)
+  ~ Use mixed slides with content in **HTML or markdown**
+  
+[HTML + external Markdown file](mixed-external.html)
+  ~ Use mixed slides with content in **HTML** or loaded with an 
+    **external markdown file**
 
 Click on one of those options to see details on how to use them.

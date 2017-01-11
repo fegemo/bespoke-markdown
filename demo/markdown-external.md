@@ -19,22 +19,23 @@ Please, proceed to the next slide.
 
 ---
 
-And the markdown-external.md file:
+And the [markdown-external.md](markdown-external.md) file:
 
-```md
+```markdown
 # Sample usage
 
 What does the fox say?
 
-  * Ding ding ding ding ding
-  * Wapapapapa-papow
-  * Rati-rati-rati-how
+- Ding ding ding ding ding
+- Wapapapapa-papow
+- Rati-rati-rati-how
 
 '---
 
 # Second slide
 
-The "---" (without the leading ') in its own line creates a new slide.
+The "---" (without the leading ') in its
+own line creates a new slide.
 
 ```
 
@@ -47,9 +48,10 @@ Go to the next slides to **see how that code gets rendered**.
 # Sample usage
 
 What does the fox say?
-  * (  ) Ding ding ding ding ding
-  * (  ) Wapapapapa-papow
-  * (  ) Rati-rati-rati-how
+
+- Ding ding ding ding ding
+- Wapapapapa-papow
+- Rati-rati-rati-how
 
 ---
 

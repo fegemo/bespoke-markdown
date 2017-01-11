@@ -22,7 +22,7 @@ p {
 
 dt {
   float: left;
-  width: 160px;
+  width: 220px;
   overflow: hidden;
   clear: left;
   text-align: right;
@@ -30,7 +30,7 @@ dt {
   white-space: nowrap;
 }
 
-dt > .label {
+dt > a {
   display: inline;
   font-weight: bold;
   font-size: 75%;
@@ -40,7 +40,7 @@ dt > .label {
 }
 
 dd {
-  margin-left: 170px;
+  margin-left: 230px;
 }
 
 tr, td, th {
