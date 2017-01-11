@@ -292,7 +292,7 @@ describe('bespoke-markdownit', function() {
           pluginSpy = jasmine.createSpy();
         createSlide(slideContent);
         deck = bespoke.from(parentNode, [
-          markdown(null, [pluginSpy, 'arg1', 2])
+          markdown(null, [[pluginSpy, 'arg1', 2]])
         ]);
 
         expect(pluginSpy).toHaveBeenCalled();
