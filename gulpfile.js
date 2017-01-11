@@ -1,20 +1,19 @@
 var gulp = require('gulp'),
-    gutil = require('gulp-util'),
-    ghpages = require('gh-pages'),
-    jshint = require('gulp-jshint'),
-    map = require('vinyl-map'),
-    istanbul = require('istanbul'),
-    karma = require('karma'),
-    coveralls = require('gulp-coveralls'),
-    header = require('gulp-header'),
-    rename = require('gulp-rename'),
-    del = require('del'),
-    uglify = require('gulp-uglify'),
-    pkg = require('./package.json'),
-    browserify = require('browserify'),
-    source = require('vinyl-source-stream'),
-    buffer = require('vinyl-buffer'),
-    path = require('path');
+  gutil = require('gulp-util'),
+  jshint = require('gulp-jshint'),
+  map = require('vinyl-map'),
+  istanbul = require('istanbul'),
+  karma = require('karma'),
+  coveralls = require('gulp-coveralls'),
+  header = require('gulp-header'),
+  rename = require('gulp-rename'),
+  del = require('del'),
+  uglify = require('gulp-uglify'),
+  pkg = require('./package.json'),
+  browserify = require('browserify'),
+  source = require('vinyl-source-stream'),
+  buffer = require('vinyl-buffer'),
+  path = require('path');
 
 gulp.task('default', ['clean', 'lint', 'test', 'compile']);
 gulp.task('dev', ['compile', 'lint', 'test', 'watch']);
@@ -95,5 +94,6 @@ gulp.task('compile:demo', ['compile'], function() {
 });
 
 gulp.task('deploy:demo', ['compile:demo'], function(done) {
-  require('gh-pages').publish(path.join(__dirname, 'demo'), { logger: gutil.log }, done);
+  var ghpages = require('gh-pages');
+  ghpages.publish(path.join(__dirname, 'demo'), { logger: gutil.log }, done);
 });
