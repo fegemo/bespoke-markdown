@@ -1,6 +1,6 @@
 # &lt; [Back](index.html)
 
-This is a sample usage of [bespoke-markdown](https://github.com/fegemo/bespoke-markdownit)
+This is a sample usage of [bespoke-markdownit](https://github.com/fegemo/bespoke-markdownit)
 using **an external markdown file** for the whole presentation.
 
 The structure of the html of the presentation:
