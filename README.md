@@ -4,6 +4,7 @@
 
 Allows you to use [(GitHub flavored) Markdown][gfm] to author your [bespoke.js](https://github.com/markdalgleish/bespoke.js) presentation.
 There are 4 ways to use this plugin and they are described on the [demo page](http://fegemo.github.io/bespoke-markdownit/).
+
 [gfm]: https://help.github.com/articles/github-flavored-markdown
 
 bespoke-markdownit renders Markdown in HTML using the awesome 
@@ -306,7 +307,7 @@ $ bower install bespoke-markdownit
 bespoke-markdownit was forked from [bespoke-markdown][bespoke-markdown] and is
 also inspired by [bespoke-meta-markdown][bespoke-meta-markdown].
 
-bespoke-markdown uses [marked][marked] as its parser, which bespke-markdownit 
+bespoke-markdown uses [marked][marked] as its parser, which bespoke-markdownit 
 improves by using [markdown-it][markdown-it]. The latter is not as fast as 
 [marked][marked], but it was designed to be extensible through plugins 
 from the beggining and, as such, is much more flexible.
