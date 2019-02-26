@@ -1,3 +1,7 @@
+const puppeteer = require('puppeteer');
+
+process.env.CHROME_BIN = puppeteer.executablePath();
+
 module.exports = function(config) {
   config.set({
     basePath: '',
@@ -22,8 +26,8 @@ module.exports = function(config) {
     reporters: ['progress', 'coverage'],
 
     coverageReporter: {
-      type : 'lcov',
-      dir : 'test/coverage'
+      type: 'lcov',
+      dir: 'test/coverage'
     },
 
     port: 9090,
@@ -32,7 +36,7 @@ module.exports = function(config) {
 
     autoWatch: true,
 
-    browsers: ['PhantomJS'],
+    browsers: ['ChromeHeadless'],
 
     singleRun: true
   });

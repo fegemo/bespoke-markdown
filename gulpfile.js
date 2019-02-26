@@ -1,99 +1,137 @@
-var gulp = require('gulp'),
-  gutil = require('gulp-util'),
-  jshint = require('gulp-jshint'),
+const { src, dest, series, parallel, watch } = require('gulp'),
   map = require('vinyl-map'),
-  istanbul = require('istanbul'),
-  karma = require('karma'),
-  coveralls = require('gulp-coveralls'),
+  terser = require('gulp-terser'),
   header = require('gulp-header'),
   rename = require('gulp-rename'),
-  del = require('del'),
-  uglify = require('gulp-uglify'),
-  pkg = require('./package.json'),
-  browserify = require('browserify'),
-  source = require('vinyl-source-stream'),
+  eslint = require('gulp-eslint'),
   buffer = require('vinyl-buffer'),
-  path = require('path');
+  webserver = require('gulp-webserver'),
+  coveralls = require('gulp-coveralls'),
+  source = require('vinyl-source-stream');
 
-gulp.task('default', ['clean', 'lint', 'test', 'compile']);
-gulp.task('dev', ['compile', 'lint', 'test', 'watch']);
+const del = require('delete'),
+  ghpages = require('gh-pages'),
+  browserify = require('browserify');
 
-gulp.task('watch', function() {
-  gulp.watch('lib/**/*.js', ['test', 'lint', 'compile']);
-  gulp.watch('test/spec/**/*.js', ['test']);
-});
+const istanbul = require('istanbul'),
+  karma = require('karma');
 
-gulp.task('clean', function(done) {
-  return del([
-    'dist',
-    'lib-instrumented',
-    'test/coverage'
-  ], done);
-});
+const path = require('path');
+const pkg = require('./package.json');
 
-gulp.task('lint', function() {
-  return gulp.src(['gulpfile.js', 'lib/**/*.js', 'specs/**/*.js'])
-    .pipe(jshint('.jshintrc'))
-    .pipe(jshint.reporter('jshint-stylish'));
-});
+function clean(done) {
+  return del(['dist', 'lib-instrumented', 'test/coverage'], done);
+}
 
-gulp.task('instrument', function() {
-  return gulp.src('lib/**/*.js')
-    .pipe(map(function(code, filename) {
-      var instrumenter = new istanbul.Instrumenter(),
-        relativePath = path.relative(__dirname, filename);
-      return instrumenter.instrumentSync(code.toString(), relativePath);
-    }))
-    .pipe(gulp.dest('lib-instrumented'));
-});
+function lint() {
+  return src(['gulpfile.js', 'lib/**/*.js', 'specs/**/*.js']).pipe(
+    eslint.failAfterError()
+  );
+}
 
-gulp.task('test', ['instrument'], function(done) {
-  var server = new karma.Server({
-    configFile: __dirname + '/karma.conf.js'
-  }, function() { done(); });
+function instrument() {
+  return src('lib/**/*.js')
+    .pipe(
+      map((code, filename) => {
+        const instrumenter = new istanbul.Instrumenter(),
+          relativePath = path.relative(__dirname, filename);
+
+        return instrumenter.instrumentSync(code.toString(), relativePath);
+      })
+    )
+    .pipe(dest('lib-instrumented'));
+}
+
+function test(done) {
+  const server = new karma.Server(
+    {
+      configFile: __dirname + '/karma.conf.js'
+    },
+    function() {
+      done();
+    }
+  );
+
   server.start();
-});
+}
 
-gulp.task('coveralls', ['test'], function() {
-  return gulp.src(['test/coverage/**/lcov.info'])
-    .pipe(coveralls());
-});
+function coverageReport() {
+  return src(['test/coverage/**/lcov.info']).pipe(coveralls());
+}
 
-gulp.task('compile', ['clean'], function() {
-  return browserify({debug: true, standalone: 'bespoke.plugins.markdownIt'})
+function compile() {
+  return browserify({ debug: true, standalone: 'bespoke.plugins.markdownIt' })
     .add('./lib/bespoke-markdownit.js')
     .bundle()
     .pipe(source('bespoke-markdownit.js'))
     .pipe(buffer())
-    .pipe(header([
-      '/*!',
-      ' * <%= name %> v<%= version %>',
-      ' *',
-      ' * Copyright <%= new Date().getFullYear() %>, <%= author.name %>',
-      ' * This content is released under the <%= license %> license',
-      ' */\n\n'
-    ].join('\n'), pkg))
-    .pipe(gulp.dest('dist'))
+    .pipe(
+      header(
+        [
+          '/*!',
+          ' * <%= name %> v<%= version %>',
+          ' *',
+          ' * Copyright <%= new Date().getFullYear() %>, <%= author.name %>',
+          ' * This content is released under the <%= license %> license',
+          ' */\n\n'
+        ].join('\n'),
+        pkg
+      )
+    )
+    .pipe(dest('dist'))
     .pipe(rename('bespoke-markdownit.min.js'))
-    .pipe(uglify())
-    .pipe(header([
-      '/*! <%= name %> v<%= version %> ',
-      '© <%= new Date().getFullYear() %> <%= author.name %>, ',
-      '<%= license %> License */\n'
-    ].join(''), pkg))
-    .pipe(gulp.dest('dist'));
-});
+    .pipe(terser({
+      ecma: 8,
+      compress: {
+        unsafe: true,
+        arguments: true,
+        'drop_console': true
+      }
+    }))
+    .pipe(
+      header(
+        [
+          '/*! <%= name %> v<%= version %> ',
+          '© <%= new Date().getFullYear() %> <%= author.name %>, ',
+          '<%= license %> License */\n'
+        ].join(''),
+        pkg
+      )
+    )
+    .pipe(dest('dist'));
+}
 
-
-gulp.task('compile:demo', ['compile'], function() {
+function compileDemo() {
   return browserify({ debug: true })
     .add('demo/demo.js')
     .bundle()
     .pipe(source('demo.bundled.js'))
-    .pipe(gulp.dest('demo'));
-});
+    .pipe(dest('demo'));
+}
 
-gulp.task('deploy:demo', ['compile:demo'], function(done) {
-  var ghpages = require('gh-pages');
-  ghpages.publish(path.join(__dirname, 'demo'), { logger: gutil.log }, done);
-});
+function dev() {
+  const port = 8085;
+
+  watch('lib/**/*.js', series(lint, compile, test));
+  watch('test/spec/**/*.js', test);
+
+  src('demo').pipe(
+    webserver({
+      livereload: true,
+      open: true,
+      port
+    })
+  );
+}
+
+function deploy(cb) {
+  ghpages.publish(path.join(__dirname, 'demo'), cb);
+}
+
+exports.clean = clean;
+exports.lint = lint;
+exports.compile = series(lint, compile);
+exports.test = series(lint, instrument, test);
+exports.dev = series(parallel(compile, compileDemo), dev);
+exports.coveralls = series(exports.test, coverageReport);
+exports.deploy = deploy;
