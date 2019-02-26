@@ -16,7 +16,7 @@
     "url": "git://github.com/fegemo/bespoke-markdownit.git"
   },
   "scripts": {
-    "test": "gulp",
+    "test": "gulp test",
     "coveralls": "gulp coveralls"
   },
   "peerDependencies": {
