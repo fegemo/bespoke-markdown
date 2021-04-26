@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Update and improvement of Polish translation from [@m-aciek](https://github.com/m-aciek). -->
 
+## [1.2.0] - 2021-04-26
+### Changed
+- Updated dev dependencies, upgrading karma and istanbul
+- Added `package-lock.json` to the repository
+
 ## [1.1.0] - 2019-02-26
 ### Added
 - This changelog.

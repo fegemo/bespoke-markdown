@@ -14,20 +14,25 @@ module.exports = function(config) {
         included: false,
         served: true
       },
-      'test/spec/*Spec.js'
+      'test/spec/*Spec.js',
+      'lib/**/*.js'
     ],
 
     exclude: [],
 
     preprocessors: {
-      'test/spec/*.js': 'browserify'
+      'test/spec/*.js': 'browserify',
+      'lib/*.js': ['browserify', 'coverage']
     },
 
     reporters: ['progress', 'coverage'],
 
     coverageReporter: {
       type: 'lcov',
-      dir: 'test/coverage'
+      dir: 'test/coverage',
+      instrumenterOptions: {
+        istanbul: { noCompact: true }
+      }
     },
 
     port: 9090,

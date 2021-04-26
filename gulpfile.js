@@ -1,26 +1,24 @@
 const { src, dest, series, parallel, watch } = require('gulp'),
-  map = require('vinyl-map'),
   terser = require('gulp-terser'),
   header = require('gulp-header'),
   rename = require('gulp-rename'),
   eslint = require('gulp-eslint'),
   buffer = require('vinyl-buffer'),
-  webserver = require('gulp-webserver'),
-  coveralls = require('gulp-coveralls'),
+  connect = require('gulp-connect'),
+  coveralls = require('@kollavarsham/gulp-coveralls'),
   source = require('vinyl-source-stream');
 
 const del = require('delete'),
   ghpages = require('gh-pages'),
   browserify = require('browserify');
 
-const istanbul = require('istanbul'),
-  karma = require('karma');
+const karma = require('karma');
 
 const path = require('path');
 const pkg = require('./package.json');
 
 function clean(done) {
-  return del(['dist', 'lib-instrumented', 'test/coverage'], done);
+  return del(['dist', 'test/coverage'], done);
 }
 
 function lint() {
@@ -29,30 +27,19 @@ function lint() {
   );
 }
 
-function instrument() {
-  return src('lib/**/*.js')
-    .pipe(
-      map((code, filename) => {
-        const instrumenter = new istanbul.Instrumenter(),
-          relativePath = path.relative(__dirname, filename);
-
-        return instrumenter.instrumentSync(code.toString(), relativePath);
-      })
-    )
-    .pipe(dest('lib-instrumented'));
-}
-
 function test(done) {
-  const server = new karma.Server(
-    {
-      configFile: __dirname + '/karma.conf.js'
-    },
-    function() {
+  const parseConfig = karma.config.parseConfig;
+  const Server = karma.Server;
+  parseConfig(
+    path.resolve('karma.conf.js'),
+    null,
+    { promiseConfig: true, throwErrors: true }
+  ).then(karmaConfig => {
+    const server = new Server(karmaConfig, exitCode => {
       done();
-    }
-  );
-
-  server.start();
+    });
+    server.start();
+  });
 }
 
 function coverageReport() {
@@ -80,14 +67,16 @@ function compile() {
     )
     .pipe(dest('dist'))
     .pipe(rename('bespoke-markdownit.min.js'))
-    .pipe(terser({
-      ecma: 8,
-      compress: {
-        unsafe: true,
-        arguments: true,
-        'drop_console': true
-      }
-    }))
+    .pipe(
+      terser({
+        ecma: 8,
+        compress: {
+          unsafe: true,
+          arguments: true,
+          drop_console: true
+        }
+      })
+    )
     .pipe(
       header(
         [
@@ -98,7 +87,8 @@ function compile() {
         pkg
       )
     )
-    .pipe(dest('dist'));
+    .pipe(dest('dist'))
+    .pipe(connect.reload());
 }
 
 function compileDemo() {
@@ -106,7 +96,8 @@ function compileDemo() {
     .add('demo/demo.js')
     .bundle()
     .pipe(source('demo.bundled.js'))
-    .pipe(dest('demo'));
+    .pipe(dest('demo'))
+    .pipe(connect.reload());
 }
 
 function dev() {
@@ -115,13 +106,11 @@ function dev() {
   watch('lib/**/*.js', series(lint, compile, test));
   watch('test/spec/**/*.js', test);
 
-  src('demo').pipe(
-    webserver({
-      livereload: true,
-      open: true,
-      port
-    })
-  );
+  connect.server({
+    root: 'demo',
+    livereload: true,
+    port
+  });
 }
 
 function deploy(cb) {
@@ -131,7 +120,7 @@ function deploy(cb) {
 exports.clean = clean;
 exports.lint = lint;
 exports.compile = series(lint, compile);
-exports.test = series(lint, instrument, test);
+exports.test = series(lint, test);
 exports.dev = series(parallel(compile, compileDemo), dev);
 exports.coveralls = series(exports.test, coverageReport);
 exports.deploy = deploy;

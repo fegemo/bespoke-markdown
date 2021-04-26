@@ -1,5 +1,5 @@
 const bespoke = require('bespoke'),
-  markdown = require('../../lib-instrumented/bespoke-markdownit.js');
+  markdown = require('../../lib/bespoke-markdownit.js');
 const FIXTURES_PATH = 'base/test/fixtures/';
 
 describe('bespoke-markdownit', function() {
