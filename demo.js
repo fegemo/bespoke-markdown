@@ -1,4 +1,4 @@
-var bespoke = require('bespoke')
+const bespoke = require('bespoke'),
   keys = require('bespoke-keys'),
   touch = require('bespoke-touch'),
   markdownIt = require('../dist/bespoke-markdownit.min.js'),
